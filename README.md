@@ -17,9 +17,9 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 | GPIO | USB   | TFT   | Touch | SD-Card | Description    |
 | :--: | :---- | :---- | :---- | :------ | :------------- |
 | 16   | DP_P0 |       |       |         | D+  ( green )  |
-| 17   | DM_P0 |       |       |         | D+  ( white )  |
+| 17   | DM_P0 |       |       |         | D-  ( white )  |
 | 13   | DP_P3 |       |       |         | D+  ( green )  |
-| 15   | DM_P3 |       |       |         | D+  ( white )  |
+| 15   | DM_P3 |       |       |         | D-  ( white )  |
 |      |       |       |       |         | 5V  ( red )    |
 |      |       |       |       |         | GND ( black )  |
 |------|-------|-------|-------|---------|----------------|
