@@ -4,9 +4,8 @@ Tested with ESP32 DevKitC v4, ili9341 display and Arduino IDE 2.1.0 / PlatformIO
 
 Display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX
 
-Details about display and installation is [here](/../Touch-Display-ili9341-320x240)
+Details about display and installation is [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240)
 
-Details about display and installation is [here](../Touch-Display-ili9341-320x240)
 
 ![cursor_01.jpg](pictures/cursor_01.jpg)
 
