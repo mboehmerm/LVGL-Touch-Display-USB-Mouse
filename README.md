@@ -23,14 +23,14 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 |      |       |       |       |         | 5V  ( red )    |
 |      |       |       |       |         | GND ( black )  |
 |------|-------|-------|-------|---------|----------------|
+| EN   |       | RESET |       |         | RST            |
 | 23   |       | SDI   | T_DIN | SD_MOSI | MOSI           |
 | 19   |       |(SDO)  | T_DO  | SD_MISO | MISO           |
 | 18   |       | SCK   | T-CLK | SD_SCK  | CLK            |
 |  2   |       | DC    |       |         | DC             |
-| EN   |       | RESET |       |         | RST            |
 | 14   |       | CS    |       |         | CS  (TFT)      |
-|  5   |       |       |       | SD_CS   | CS  (SD)       |
 |  4   |       |       | T_CS  |         | CS  (Touch)    |
+| (5)  |       |       |       | SD_CS   | CS  (SD)       |
 |      |       |       | T_IRQ |         | IRQ (not used) |
 |      |       | GND   |       |         | GND            |
 |      |       | VCC   |       |         | 3.3V           |
