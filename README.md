@@ -1,6 +1,6 @@
 # LVGL + Touch Display + USB-Mouse or USB-keyboard
 
-# under construction !
+# Under construction !
 
 Tested with ESP32 DevKitC v4, ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
 
@@ -37,13 +37,12 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 |      |       | LED   |       |         | 3.3V           |
 
 
-
 ## Installation
 
 Details about the installation of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240).
 
 - [USB_Test_Scan.ino](Arduino/USB_Test_Scan/USB_Test_Scan.ino)
-  - Only used for testing, if there are mouses and keyboards, that work with the library "ESP32-USB-Soft-Host" i used USB_Test_Scan.ino. ( only 2 older mice work, but 3 of 4 keyboards ). Only this library must be installed or copied.
+  - Only used for testing, if there are mice and keyboards, that work with the library "ESP32-USB-Soft-Host". Only this library must be installed or copied.
 - [USB_Test_Print.ino](Arduino/USB_Test_Print/USB_Test_Print.ino)
   - More detailed informations are shown in the serial monitor.  
     - Which Mouse Button is pressed
@@ -51,25 +50,25 @@ Details about the installation of the libraries LVGL, TFT_eSPI and LovyanGFX can
     - Keyboard input is shown directy for english or german keyboard, also special characters ( @€µöäü etc. )
 - [LVGL_Arduino_USB.ino](Arduino/LVGL_Arduino_USB/LVGL_Arduino_USB.ino) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB) )
   - Libraries needed : LVGL, TFT_eSPI and ESP32-USB-Soft-Host.
-  - Details about installation can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240)  
+  - Details about installation and configuration can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240)  
 
-- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan/LVGL_Arduino_USB_Lovyan.ino) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan) )
+- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan/LVGL_Arduino_USB_Lovyan.ino) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan) See below ! )
   - Libraries needed : LVGL, LovyanGFX and ESP32-USB-Soft-Host
-  - Details about installation can be found also [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240)  
+  - Details about installation and configuration can also be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240)  
 
-**Problems with PlatformIO programs :**
+## Problems with PlatformIO programs ( to be done ) :
 - All PlatformIO programs :
   - many warnings : unsigned conversion from 'int' to 'uint8_t'
-  - build_flags = -Wno-narrowingw necessary
+  - "build_flags = -Wno-narrowingw" in platformio.ini necessary
 - USB_Test_Scan ok
 - USB_Test_Print ok
 - LVGL_Demo_USB : ok
-- LVGL_Demo_USB_Lovyan : ok if you don't hit any keyboard button
+- LVGL_Demo_USB_Lovyan : ok if you don't hit any keyboard key.
 
 
 Some files of ESP32-USB-Soft-Host are slightly modified for minimal output in the serial monitor.
 
-# working HID devices
+# Working HID devices
 
 | Type     | bcdUSB | idVendor |idProduct| Description  |
 | :------- | :----: | :-----   | :------ | :----------  |
