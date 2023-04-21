@@ -1,0 +1,237 @@
+int main(void)
+{
+
+    // DRM_Init();
+
+	// pthread_t pth_capt;
+
+	// pthread_create(&pth_capt, NULL, (void*)V4L2_SP_Streaming, NULL);
+
+#if 1
+/* ================ */
+/* ===== LVGL ===== */
+/* ================ */
+
+    /*LittlevGL init*/
+    lv_init();
+
+    /*Linux frame buffer device init*/
+    drm_init();
+
+    /*A small buffer for LittlevGL to draw the screen's content*/
+    static lv_color_t buf[DISP_BUF_SIZE], buf1[DISP_BUF_SIZE];
+
+    /*Initialize a descriptor for the buffer*/
+    static lv_disp_draw_buf_t disp_buf;
+    // lv_disp_draw_buf_init(&disp_buf, buf, NULL, DISP_BUF_SIZE);
+    lv_disp_draw_buf_init(&disp_buf, buf, buf1, DISP_BUF_SIZE);
+
+    /*Initialize and register a display driver*/
+    static lv_disp_drv_t disp_drv;
+    lv_disp_drv_init(&disp_drv);
+    disp_drv.draw_buf   = &disp_buf;
+    disp_drv.flush_cb   = drm_flush;
+    disp_drv.hor_res    = 800;
+    disp_drv.ver_res    = 1280;
+    // disp_drv.screen_transp = 1;
+    lv_disp_drv_register(&disp_drv);
+
+#if 1
+    // trans background
+    lv_style_t style_scr_act;
+    lv_style_init(&style_scr_act);
+    lv_style_set_bg_opa(&style_scr_act, LV_OPA_TRANSP);
+    lv_obj_add_style(lv_scr_act(), &style_scr_act, 0);
+    // lv_disp_set_bg_opa(lv_scr_act(), LV_OPA_TRANSP);
+#endif
+
+#if 1
+    evdev_init();
+    static lv_indev_drv_t indev_drv_1;
+    lv_indev_drv_init(&indev_drv_1); /*Basic initialization*/
+    indev_drv_1.type = LV_INDEV_TYPE_POINTER;
+
+    /*This function will be called periodically (by the library) to get the mouse position and state*/
+    indev_drv_1.read_cb = evdev_read;
+    lv_indev_t *mouse_indev = lv_indev_drv_register(&indev_drv_1);    
+    // debug
+    if (mouse_indev)
+    {
+        printf("register success.\n");
+    }
+    else
+    {
+        printf("register fail.\n");
+    }
+#endif
+
+#if 1
+    /*Set a cursor for the mouse*/
+    LV_IMG_DECLARE(mouse_cursor_icon)
+    lv_obj_t * cursor_obj = lv_img_create(lv_scr_act()); /*Create an image object for the cursor */
+    lv_img_set_src(cursor_obj, &mouse_cursor_icon);           /*Set the image source*/
+    lv_indev_set_cursor(mouse_indev, cursor_obj);             /*Connect the image  object to the driver*/
+#endif
+    
+    mystart();
+ 
+    printf("Start handler\n");
+
+    /*Handle LitlevGL tasks (tickless mode)*/
+    while(1) {
+        lv_timer_handler();
+        usleep(5000);
+    }
+
+#endif
+
+    // pthread_exit(NULL);
+
+    return 0;
+}
+
+void evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
+{
+    struct input_event in;
+
+    printf("[DEBUG] Entered evdev_read() function...\n");
+
+    while(read(evdev_fd, &in, sizeof(struct input_event)) > 0) {
+        if(in.type == EV_REL) {
+            printf("[DEBUG] in.type == EV_REL\n");
+            if(in.code == REL_X)
+				#if EVDEV_SWAP_AXES
+					evdev_root_y += in.value;
+				#else
+					evdev_root_x += in.value;
+				#endif
+            else if(in.code == REL_Y)
+				#if EVDEV_SWAP_AXES
+					evdev_root_x += in.value;
+				#else
+					evdev_root_y += in.value;
+				#endif
+        } else if(in.type == EV_ABS) {
+            printf("[DEBUG] in.type == EV_ABS\n");
+            if(in.code == ABS_X)
+				#if EVDEV_SWAP_AXES
+					evdev_root_y = in.value;
+				#else
+					evdev_root_x = in.value;
+				#endif
+            else if(in.code == ABS_Y)
+				#if EVDEV_SWAP_AXES
+					evdev_root_x = in.value;
+				#else
+					evdev_root_y = in.value;
+				#endif
+            else if(in.code == ABS_MT_POSITION_X)
+                                #if EVDEV_SWAP_AXES
+                                        evdev_root_y = in.value;
+                                #else
+                                        evdev_root_x = in.value;
+                                #endif
+            else if(in.code == ABS_MT_POSITION_Y)
+                                #if EVDEV_SWAP_AXES
+                                        evdev_root_x = in.value;
+                                #else
+                                        evdev_root_y = in.value;
+                                #endif
+            else if(in.code == ABS_MT_TRACKING_ID) {
+                                if(in.value == -1)
+                                    evdev_button = LV_INDEV_STATE_REL;
+                                else if(in.value == 0)
+                                    evdev_button = LV_INDEV_STATE_PR;
+            }
+        } else if(in.type == EV_KEY) {
+            printf("[DEBUG] in.type == EV_KEY\n");
+            if(in.code == BTN_MOUSE || in.code == BTN_TOUCH) {
+                if(in.value == 0)
+                    evdev_button = LV_INDEV_STATE_REL;
+                else if(in.value == 1)
+                    evdev_button = LV_INDEV_STATE_PR;
+            } else if(drv->type == LV_INDEV_TYPE_KEYPAD) {
+#if USE_XKB
+                data->key = xkb_process_key(in.code, in.value != 0);
+#else
+                switch(in.code) {
+                    case KEY_BACKSPACE:
+                        data->key = LV_KEY_BACKSPACE;
+                        break;
+                    case KEY_ENTER:
+                        data->key = LV_KEY_ENTER;
+                        break;
+                    case KEY_PREVIOUS:
+                        data->key = LV_KEY_PREV;
+                        break;
+                    case KEY_NEXT:
+                        data->key = LV_KEY_NEXT;
+                        break;
+                    case KEY_UP:
+                        data->key = LV_KEY_UP;
+                        break;
+                    case KEY_LEFT:
+                        data->key = LV_KEY_LEFT;
+                        break;
+                    case KEY_RIGHT:
+                        data->key = LV_KEY_RIGHT;
+                        break;
+                    case KEY_DOWN:
+                        data->key = LV_KEY_DOWN;
+                        break;
+                    case KEY_TAB:
+                        data->key = LV_KEY_NEXT;
+                        break;
+                    default:
+                        data->key = 0;
+                        break;
+                }
+#endif /* USE_XKB */
+                if (data->key != 0) {
+                    /* Only record button state when actual output is produced to prevent widgets from refreshing */
+                    data->state = (in.value) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+                }
+                evdev_key_val = data->key;
+                evdev_button = data->state;
+                return;
+            }
+        }
+    }
+
+    if(drv->type == LV_INDEV_TYPE_KEYPAD) {
+        /* No data retrieved */
+        data->key = evdev_key_val;
+        data->state = evdev_button;
+        return;
+    }
+    if(drv->type != LV_INDEV_TYPE_POINTER)
+        return ;
+    /*Store the collected data*/
+
+#if EVDEV_CALIBRATE
+    data->point.x = map(evdev_root_x, EVDEV_HOR_MIN, EVDEV_HOR_MAX, 0, drv->disp->driver->hor_res);
+    data->point.y = map(evdev_root_y, EVDEV_VER_MIN, EVDEV_VER_MAX, 0, drv->disp->driver->ver_res);
+#else
+    data->point.x = evdev_root_x;
+    data->point.y = evdev_root_y;
+#endif
+
+    // debug
+    printf("[DEBUG] evdev_root_x: %d\n", evdev_root_x);
+    printf("[DEBUG] evdev_root_y: %d\n", evdev_root_y);
+    printf("[DEBUG] evdev_button: %d\n", evdev_button);
+
+    data->state = evdev_button;
+
+    if(data->point.x < 0)
+      data->point.x = 0;
+    if(data->point.y < 0)
+      data->point.y = 0;
+    if(data->point.x >= drv->disp->driver->hor_res)
+      data->point.x = drv->disp->driver->hor_res - 1;
+    if(data->point.y >= drv->disp->driver->ver_res)
+      data->point.y = drv->disp->driver->ver_res - 1;
+
+    printf("[DEBUG] Leaving evdev_read() function...\n");
+
+    return ;
