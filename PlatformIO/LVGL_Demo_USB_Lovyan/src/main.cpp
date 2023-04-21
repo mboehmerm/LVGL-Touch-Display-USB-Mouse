@@ -11,6 +11,8 @@
 //#define DEBUG_KBD
 //#define FORCE_TEMPLATED_NOPS
 
+#define lang_DE                     // comment for en, uncomment for de 
+
 #include <lvgl.h>
 //#define LGFX_USE_V1
 #include <LovyanGFX.hpp>

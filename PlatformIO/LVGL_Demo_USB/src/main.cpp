@@ -3,6 +3,8 @@
 //#define DEBUG_KBD
 //#define FORCE_TEMPLATED_NOPS
 
+#define lang_DE                     // kbd : comment for en, uncomment for de 
+
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <demos/lv_demos.h>
