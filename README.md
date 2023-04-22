@@ -4,9 +4,9 @@
 
 Tested with ESP32 DevKitC v4, ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
 
-The library ESP32-USB-Soft-Host support only USB1.1 Known working HID devices can be found [here](https://github.com/tobozo/ESP32-USB-Soft-Host) or below.
+The library ESP32-USB-Soft-Host support only USB1.1 and known working HID devices can be found [here](https://github.com/tobozo/ESP32-USB-Soft-Host) or below.
 
-The display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX. Details about this display and the installation of the libraries can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). Remember that here the CS pin is changed from GPIO15 to GPIO14, because GPIO15 is needed for USB.
+The display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX. Details about this display and the installation of the libraries can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). Remember that here the CS pin is changed from GPIO15 to GPIO14, because GPIO15 is needed for a second USB.
 
 ![cursor_01.jpg](pictures/cursor_01.jpg)
 
@@ -41,9 +41,9 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 
 Details about the installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240).
 
-- [USB_Test_Scan.ino](Arduino/USB_Test_Scan/USB_Test_Scan.ino)
+- [USB_Test_Scan.ino](Arduino/USB_Test_Scan/USB_Test_Scan.ino) ( [PlatformIO version](PlatformIO/USB_Test_Scan) )
   - Only used for testing, if there are mice and keyboards, that work with the library "ESP32-USB-Soft-Host". Only this library must be installed or copied.
-- [USB_Test_Print.ino](Arduino/USB_Test_Print/USB_Test_Print.ino)
+- [USB_Test_Print.ino](Arduino/USB_Test_Print/USB_Test_Print.ino) ( [PlatformIO version](PlatformIO/USB_Test_Print) )
   - More detailed informations are shown in the serial monitor.  
     - Which Mouse Button is pressed
     - Direction of mouse movement and scrolling.
@@ -53,24 +53,30 @@ Details about the installation and configuration of the libraries LVGL, TFT_eSPI
   - Working mouse and mouse button(s). Keyboard keys are only shown in the serial monitor.
 
 - [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan/LVGL_Arduino_USB_Lovyan.ino) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan) See below ! )
-  - Libraries needed : LVGL, LovyanGFX and ESP32-USB-Soft-Host
-  - Working mouse and mouse button(s). Keyboard keys are only shown in the serial monitor.
+  - Veriosn for the library LovyanGFX
 
-the aim of these programs is to find out how HID mice and keyboards can be used with an esp32.
+The target of these programs is to find out how HID mice and keyboards can be used with an esp32.
 
-## Problems with PlatformIO programs ( to be done ) :
-- All PlatformIO programs :
-  - many warnings : unsigned conversion from 'int' to 'uint8_t'
-  - "build_flags = -Wno-narrowingw" in platformio.ini necessary
-- USB_Test_Scan ok
-- USB_Test_Print ok
-- LVGL_Demo_USB : ok
-- LVGL_Demo_USB_Lovyan : ok if you don't hit any keyboard key.
+## Problems only with the PlatformIO versions :
+Compiling errors and warnings are related to the special characters (öäüß€ etc.) in the library "usbkbd_de.h". 
+
+To avoid the **[-Wnarrowing]** errors the "platformio.ini" should contain the build flag "-Wno-narrowing" :
+```
+; ...
+lib_deps = 
+	ESP32-USB-Soft-Host
+build_flags =
+  -Wno-narrowing      ; disable [-Wnarrowing] errors
+  ;-Wno-multichar     ; disable [-Wmultichar] warnings
+; ...
+```
+
+# Library files ESP32-USB-Soft-Host
+
+Some files of ESP32-USB-Soft-Host are slightly modified for minimal output of messages in the serial monitor, if "DEBUG_ALL" is defined.
 
 
-Some files of ESP32-USB-Soft-Host are slightly modified for minimal output in the serial monitor.
-
-# Working HID devices
+# My working HID devices
 
 | Type     | bcdUSB | idVendor |idProduct| Description  |
 | :------- | :----: | :-----   | :------ | :----------  |
@@ -80,6 +86,6 @@ Some files of ESP32-USB-Soft-Host are slightly modified for minimal output in th
 | Keyboard | 0x0200 | 0x04f2   | 0x1516  | HP KU-1516   |
 | Keyboard | 0x0110 | 0x03f0   | 0x1441  | HP SK-2029   |
 
-None of my wireless HID devices work. Also the keyboard HP KBAR211.
+None of my wireless HID devices work. Neither the keyboard HP KBAR211.
 
-No connection with logic level shifter TXS0108E (YF08E).
+No device was found using the logic level shifter TXS0108E (YF08E).
