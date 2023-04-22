@@ -37,22 +37,22 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 |      |       | LED   |       |         | 3.3V           |
 
 
-## Programs and Installation
+## Test programs
 
 Details about the installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240).
 
-- [USB_Test_Scan.ino](Arduino/USB_Test_Scan/USB_Test_Scan.ino) ( [PlatformIO version](PlatformIO/USB_Test_Scan) )
+- [USB_Test_Scan.ino](Arduino/USB_Test_Scan) ( [PlatformIO version](PlatformIO/USB_Test_Scan) )
   - Only used for testing, if there are mice and keyboards, that work with the library "ESP32-USB-Soft-Host". Only this library must be installed or copied.
-- [USB_Test_Print.ino](Arduino/USB_Test_Print/USB_Test_Print.ino) ( [PlatformIO version](PlatformIO/USB_Test_Print) )
+- [USB_Test_Input.ino](Arduino/USB_Test_Print) ( [PlatformIO version](PlatformIO/USB_Test_Input
   - More detailed informations are shown in the serial monitor.  
     - Which Mouse Button is pressed
     - Direction of mouse movement and scrolling.
     - Keyboard input is shown directy for english or german keyboard, also special characters ( @€µöäü etc. )
-- [LVGL_Arduino_USB.ino](Arduino/LVGL_Arduino_USB/LVGL_Arduino_USB.ino) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB) )
+- [LVGL_Arduino_USB.ino](Arduino/LVGL_Arduino_USB) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB) )
   - Libraries needed : LVGL, TFT_eSPI and ESP32-USB-Soft-Host.
   - Working mouse and mouse button(s). Keyboard keys are only shown in the serial monitor.
 
-- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan/LVGL_Arduino_USB_Lovyan.ino) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan) See below ! )
+- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan) See below ! )
   - Veriosn for the library LovyanGFX
 
 The target of these programs is to find out how HID mice and keyboards can be used with an esp32.
