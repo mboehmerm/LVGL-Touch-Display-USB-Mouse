@@ -4,7 +4,7 @@
 
 Tested with ESP32 DevKitC v4, ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
 
-The library ESP32-USB-Soft-Host support only USB1.1 and known working HID devices can be found [here](https://github.com/tobozo/ESP32-USB-Soft-Host) or below.
+The library ESP32-USB-Soft-Host 0.1.4 supports only USB1.1 and known working HID devices can be found [here](https://github.com/tobozo/ESP32-USB-Soft-Host) or below.
 
 The display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX. Details about this display and the installation of the libraries can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). Remember that here the CS pin is changed from GPIO15 to GPIO14, because GPIO15 is needed for a second USB.
 
@@ -39,7 +39,7 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 
 ## Test programs
 
-Details about installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). All modified files can be found above in the folder [Arduino](Arduino/) or [PlatformIO](PlatformIO/).
+Details about installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). All modified files can be found above in the folder [Arduino](Arduino/) or [PlatformIO](PlatformIO/). ESP32-USB-Soft-Host version 0.1.4 is used.
 
 - [USB_Test_Scan.ino](Arduino/USB_Test_Scan) ( [PlatformIO version](PlatformIO/USB_Test_Scan) )
   - Used for testing, whether there are mice and keyboards, that work with "ESP32-USB-Soft-Host". Only this library must be installed or copied. For detailed information every 10 seconds or so ( USB0: Ack = 0 Nack = 0 ... ) set in the Arduino Ide "Core Debug Level" to "Debug" or "Verbose"
@@ -75,7 +75,7 @@ build_flags =
 
 Some files of ESP32-USB-Soft-Host are slightly modified for minimal output of messages in the serial monitor, if "DEBUG_ALL" is defined.
 
-The library files i used are recognized by VSCode/PlatformIO as "ESP32-USB-Soft-Host @ 0.1.4"
+The library files i [downloaded](https://github.com/tobozo/ESP32-USB-Soft-Host) and used for testing are recognized by VSCode/PlatformIO as "ESP32-USB-Soft-Host @ 0.1.4".
 
 
 # My working HID devices
