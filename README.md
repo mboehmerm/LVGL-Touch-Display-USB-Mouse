@@ -43,7 +43,7 @@ Details about the installation and configuration of the libraries LVGL, TFT_eSPI
 
 - [USB_Test_Scan.ino](Arduino/USB_Test_Scan) ( [PlatformIO version](PlatformIO/USB_Test_Scan) )
   - Only used for testing, if there are mice and keyboards, that work with the library "ESP32-USB-Soft-Host". Only this library must be installed or copied.
-- [USB_Test_Input.ino](Arduino/USB_Test_Print) ( [PlatformIO version](PlatformIO/USB_Test_Input
+- [USB_Test_Input.ino](Arduino/USB_Test_Input) ( [PlatformIO version](PlatformIO/USB_Test_Input
   - More detailed informations are shown in the serial monitor.  
     - Which Mouse Button is pressed
     - Direction of mouse movement and scrolling.
