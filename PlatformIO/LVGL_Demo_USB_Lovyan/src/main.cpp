@@ -13,6 +13,8 @@
 
 #define lang_DE                     // comment for en, uncomment for de 
 
+#include <arduino.h>
+
 #include <lvgl.h>
 //#define LGFX_USE_V1
 #include <LovyanGFX.hpp>
@@ -178,6 +180,7 @@ usb_pins_config_t USB_Pins_Config = { DP_P0, DM_P0, DP_P1, DM_P1, DP_P2, DM_P2, 
 static void my_USB_DetectCB( uint8_t usbNum, void * dev )
 {
   sDevDesc *device = (sDevDesc*)dev;
+  
   printf("\nNew device detected on USB#%d\n", usbNum);
   printf("desc.bcdUSB             = 0x%04x\n", device->bcdUSB);
   //printf("desc.bDeviceClass       = 0x%02x\n", device->bDeviceClass);
@@ -218,7 +221,8 @@ void my_print(const char * buf)
     Serial.printf(buf);
     Serial.flush();
 }
-#endif// ------------------------------------------------------------------------------------------ //
+#endif
+// ------------------------------------------------------------------------------------------ //
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
 {
@@ -251,9 +255,9 @@ void my_usb_host_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data ) {
     if (msg.data_len == 8) {                                   // Keyboard
       //printf("M %i, ", num ); 
       /*data->key = */ 
-      Prs.Parse( msg.data_len, msg.data );  // to be done
+      //uint8_t ch = Prs.Parse( msg.data_len, msg.data );  // to be done
       //data->state = LV_INDEV_STATE_PR;
-      /////////////////////////////////////////////////////////// To be done
+      //////////////////////////////////////////////////////////////////////////////////////////// To be done
       parse_before = 1;
     }  
     else if (msg.data_len == 4) {                              // Mouse

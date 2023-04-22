@@ -102,7 +102,8 @@ class KeyboardReportParser {
     bool bmScrollLock;
 
     uint8_t OemToAscii(uint8_t mod, uint8_t key);
-    uint8_t Parse(uint8_t len, uint8_t *buf);
+    void Parse(uint8_t len, uint8_t *buf);
+    //uint8_t Parse(uint8_t len, uint8_t *buf);
 
 
   protected:
@@ -149,10 +150,13 @@ class KeyboardReportParser {
 #endif
 
 // ------------------------------------------------------------------------------------------ //
-uint8_t KeyboardReportParser::Parse(uint8_t len, uint8_t *buf) {
+//uint8_t KeyboardReportParser::Parse(uint8_t len, uint8_t *buf) {
+void KeyboardReportParser::Parse(uint8_t len, uint8_t *buf) {
 
   if (buf[2] == 1)
-    return(0);
+    //return(0);
+    return;
+    
   // provide event for changed control key state
   if (prevState.bInfo[0x00] != buf[0x00]) {
     OnControlKeysChanged(prevState.bInfo[0x00], buf[0x00]);

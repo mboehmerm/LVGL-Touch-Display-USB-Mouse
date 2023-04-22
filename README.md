@@ -6,7 +6,7 @@ Tested with ESP32 DevKitC v4, ili9341 display and Arduino IDE 2.1.0 ( PlatformIO
 
 The library ESP32-USB-Soft-Host support only USB1.1 Known working HID devices can be found [here](https://github.com/tobozo/ESP32-USB-Soft-Host) or below.
 
-The display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX. Details about this display and the installation of the libraries can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240)
+The display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX. Details about this display and the installation of the libraries can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). Remember that here the CS pin is changed from GPIO15 to GPIO14, because GPIO15 is needed for USB.
 
 ![cursor_01.jpg](pictures/cursor_01.jpg)
 
@@ -28,7 +28,7 @@ Share SPI MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 | 19   |       |(SDO)  | T_DO  | SD_MISO | MISO           |
 | 18   |       | SCK   | T-CLK | SD_SCK  | CLK            |
 |  2   |       | DC    |       |         | DC             |
-| 14   |       | CS    |       |         | CS  (TFT)      |
+|**14**|       | CS    |       |         | CS  (TFT)      |
 |  4   |       |       | T_CS  |         | CS  (Touch)    |
 | (5)  |       |       |       | SD_CS   | CS  (SD)       |
 |      |       |       | T_IRQ |         | IRQ (not used) |

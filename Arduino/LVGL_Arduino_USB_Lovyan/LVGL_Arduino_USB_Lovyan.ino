@@ -11,7 +11,7 @@
 //#define DEBUG_KBD
 //#define FORCE_TEMPLATED_NOPS
 
-#define lang_DE                     // kbd : comment for en, uncomment for de 
+#include <arduino.h>
 
 #include <lvgl.h>
 //#define LGFX_USE_V1
@@ -218,7 +218,8 @@ void my_print(const char * buf)
     Serial.printf(buf);
     Serial.flush();
 }
-#endif// ------------------------------------------------------------------------------------------ //
+#endif
+// ------------------------------------------------------------------------------------------ //
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
 {

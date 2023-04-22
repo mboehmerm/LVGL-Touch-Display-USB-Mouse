@@ -5,11 +5,13 @@
 
 #define lang_DE                     // kbd : comment for en, uncomment for de 
 
+#include <arduino.h>
+
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <demos/lv_demos.h>
 
-#define SCREEN_ROTATION 1                                   // set the screen rotation
+#define SCREEN_ROTATION 0                                   // set the screen rotation
 
 /*Change to your screen resolution*/
 #if (SCREEN_ROTATION == 1) || (SCREEN_ROTATION == 3)

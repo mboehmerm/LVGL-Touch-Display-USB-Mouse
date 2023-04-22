@@ -4,6 +4,8 @@
 
 #define lang_DE                     // kbd : comment for en, uncomment for de 
 
+#include <arduino.h>
+
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <demos/lv_demos.h>
