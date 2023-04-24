@@ -251,10 +251,7 @@ void my_usb_host_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data ) {
  
     if (msg.data_len == 8) {                                   // Keyboard
       //printf("M %i, ", num ); 
-      /*data->key = */ 
       Prs.Parse( msg.data_len, msg.data );  // to be done
-      //data->state = LV_INDEV_STATE_PR;
-      /////////////////////////////////////////////////////////// To be done
       parse_before = 1;
     }  
     else if (msg.data_len == 4) {                              // Mouse
