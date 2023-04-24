@@ -3,7 +3,7 @@
 //#define DEBUG_KBD
 //#define FORCE_TEMPLATED_NOPS
 
-#define lang_DE                     // kbd : comment for en, uncomment for de 
+//#define lang_DE                     // kbd : comment for en, uncomment for de 
 
 #include <arduino.h>
 

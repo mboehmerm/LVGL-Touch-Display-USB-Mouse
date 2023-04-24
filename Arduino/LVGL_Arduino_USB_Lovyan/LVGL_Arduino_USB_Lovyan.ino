@@ -11,6 +11,8 @@
 //#define DEBUG_KBD
 //#define FORCE_TEMPLATED_NOPS
 
+//#define lang_DE  // German keyboard
+
 #include <arduino.h>
 
 #include <lvgl.h>

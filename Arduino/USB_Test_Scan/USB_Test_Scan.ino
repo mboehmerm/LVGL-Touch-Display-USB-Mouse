@@ -8,7 +8,9 @@
 
 #define DEBUG_ALL
 #define FORCE_TEMPLATED_NOPS
-#define lang_DE                   // German keyboard
+
+//#define lang_DE                   // German keyboard
+
 #include <ESP32-USB-Soft-Host.h>
 #include "usbkbd_de.h" // KeyboardReportParser
 
