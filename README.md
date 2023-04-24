@@ -1,8 +1,7 @@
 # LVGL + Touch Display + USB-Mouse + USB-Keyboard
 
 
-
-Tested with ESP32 DevKitC v4 ( or Lolin ESP32 lite), ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
+Tested with ESP32 DevKitC v4 ( or Lolin ESP32 lite ), ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
 
 The library ESP32-USB-Soft-Host 0.1.4 supports only USB1.1 and known working HID devices can be found [here](https://github.com/tobozo/ESP32-USB-Soft-Host) or below.
 
