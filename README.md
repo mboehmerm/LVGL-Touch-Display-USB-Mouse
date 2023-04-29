@@ -56,7 +56,7 @@ Details about installation and configuration of the libraries LVGL, TFT_eSPI and
   - Keyboard works except special keys ( äöüß€... ).
   - Mouse position x/y , buttons and Keyboard keys are shown in the serial monitor.
   
-- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan_kbd) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan_kbd) Mouse works not correct)
+- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan_kbd) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan_kbd) mouse does not work properly)
   - Version for the library LovyanGFX
 
 The target of these programs is to find out how HID mice and keyboards can be used with an ESP32.
@@ -74,7 +74,7 @@ build_flags =
   ;-Wno-multichar     ; disable [-Wmultichar] warnings
 ; ...
 ```
-The Mouse works not correct in [PlatformIO/LVGL_Demo_USB_Lovyan_kbd](PlatformIO/LVGL_Demo_USB_Lovyan_kbd).
+The mouse does not work properly in [PlatformIO/LVGL_Demo_USB_Lovyan_kbd](PlatformIO/LVGL_Demo_USB_Lovyan_kbd).
 
 # Library files ESP32-USB-Soft-Host
 
