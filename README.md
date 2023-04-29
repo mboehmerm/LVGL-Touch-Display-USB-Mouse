@@ -7,7 +7,8 @@ The library ESP32-USB-Soft-Host 0.1.4 supports only USB1.1 and known working HID
 
 The display works with LVGL, TFT_eSPI by Bodmer or LovyanGFX. Details about this display and the installation of the libraries can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). Remember that here the CS pin has changed from GPIO15 to GPIO14, because GPIO15 is needed as second USB device.
 
-![cursor_01.jpg](pictures/cursor_01.jpg)
+![cursor_00.jpg](pictures/cursor_00.jpg)
+![cursor_07.jpg](pictures/cursor_07.jpg)
 
 ## Connections for ESP32 DevKitC V4
 
@@ -48,13 +49,14 @@ Details about installation and configuration of the libraries LVGL, TFT_eSPI and
     - Which Mouse Button is pressed
     - Direction of mouse movement and scrolling.
     - Keyboard input is shown directy for english ( //#define lang_DE ) or german keyboard ( #define lang_DE ), also special characters ( @€µöäü etc. )
-- [LVGL_Arduino_USB.ino](Arduino/LVGL_Arduino_USB) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB) )
+- [LVGL_Arduino_USB.ino](Arduino/LVGL_Arduino_USB_kbd) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_kbd) )
   - Libraries needed : LVGL , TFT_eSPI and ESP32-USB-Soft-Host 0.1.4.
-  - Mouse and mouse button(s) are working fine, mouse cursor too.
-  - Mouse position x/y and buttons are shown in the serial monitor.
-  - Keyboard keys are shown in the serial monitor but not used in LVGL (to be done).
-
-- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan) )
+  - Mouse and all mouse buttons are working fine in LVGL.
+  - Custom mouse cursor is shown (see comments in "Cursor_XXxXX.c" files.
+  - Keyboard works except special keys ( äöüß€... ).
+  - Mouse position x/y , buttons and Keyboard keys are shown in the serial monitor.
+  
+- [LVGL_Arduino_USB_Lovyan.ino](Arduino/LVGL_Arduino_USB_Lovyan_kbd) ( [PlatformIO version](PlatformIO/LVGL_Demo_USB_Lovyan_kbd) Mouse works not correct)
   - Version for the library LovyanGFX
 
 The target of these programs is to find out how HID mice and keyboards can be used with an ESP32.
@@ -72,6 +74,7 @@ build_flags =
   ;-Wno-multichar     ; disable [-Wmultichar] warnings
 ; ...
 ```
+The Mouse works not correct in [PlatformIO/LVGL_Demo_USB_Lovyan_kbd](PlatformIO/LVGL_Demo_USB_Lovyan_kbd).
 
 # Library files ESP32-USB-Soft-Host
 
