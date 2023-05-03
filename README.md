@@ -85,14 +85,16 @@ The library files i [downloaded](https://github.com/tobozo/ESP32-USB-Soft-Host) 
 
 # My working HID devices
 
-| Type     | bcdUSB | idVendor |idProduct| Description  |
-| :------- | :----: | :-----   | :------ | :----------  |
-| Mouse    | 0x0200 | 0x04f2   | 0x0923  | HP MSU0923   |
-| Mouse    | 0x0110 | 0x062a   | 0x0000  | Speedlink Snappy BL-6141 |
-| Keyboard | 0x0110 | 0x04ca   | 0x0050  | Acer SK-9621 |
-| Keyboard | 0x0200 | 0x04f2   | 0x1516  | HP KU-1516   |
-| Keyboard | 0x0110 | 0x03f0   | 0x1441  | HP SK-2029   |
+| Type     | bcdUSB | idVendor |idProduct| 3.3V | Description  |
+| :------- | :----: | :-----   | :------ | :--: | :----------  |
+| Mouse    | 0x0200 | 0x04f2   | 0x0923  | Yes  | HP MSU0923   |
+| Mouse    | 0x0110 | 0x062a   | 0x0000  | Yes  | Speedlink Snappy BL-6141 |
+| Keyboard | 0x0110 | 0x04ca   | 0x0050  | No   | Acer SK-9621 |
+| Keyboard | 0x0200 | 0x04f2   | 0x1516  | Yes  | HP KU-1516   |
+| Keyboard | 0x0110 | 0x03f0   | 0x1441  | No   | HP SK-2029   |
 
 None of my wireless HID devices work. Neither the keyboard HP KBAR211.
+
+Some usb devices work with 3.3V .
 
 No device was found when i use the logic level shifter TXS0108E (YF08E). 

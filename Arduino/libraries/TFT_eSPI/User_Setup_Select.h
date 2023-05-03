@@ -34,6 +34,8 @@
 //#include <../Setup402_ILI9341_Touch.h>        // new : Setup file for ili9341 2.8" with touch, 40MHz
 //#include <../Setup403_ILI9341_Touch_80MHz.h>  // new : Setup file for ili9341 2.8" with touch, 80MHz
 #include <../Setup404_ILI9341_Touch_CS14.h>   // CS Pin changed : 15 -> 14
+//#include <../Setup411_S3_ST7735_Touch.h>      // ESP32-S3 , ST7735
+//#include <../Setup412_S3_ILI9341_Touch.h>     // ESP32-S3 , ili9341
 
 //#include <User_Setups/Setup405_xxxxxx.h> // Setup file für ESP32 xxxx
 //#include <../Setup405_xxxxxx.h>          // Setup file für ESP32 xxxx
