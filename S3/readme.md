@@ -59,6 +59,7 @@ D+ and D- are directly connected to the GPIO's without using any resistor. SD-ca
 | Upload Mode         | UART0 / Hardware CDC | n |
 | Upload Speed        | 921600               |   |
 | USB Mode            | USB-OTG (TinyUSB)    | n |
+
 where n = necessary (i assume).
 
 ## Test programs
