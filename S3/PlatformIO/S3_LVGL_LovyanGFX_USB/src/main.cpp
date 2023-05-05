@@ -1,0 +1,502 @@
+/////////////////////////////////////////////////////////////////
+/*
+  ESP32 | LVGL8 | Ep 0. GFX Setup (ft. LovyanGFX)
+  Video Tutorial: https://youtu.be/IPCvQ4o_WP8
+  Created by Eric N. (ThatProject)
+  modified by mboehmerm
+*/
+/////////////////////////////////////////////////////////////////
+
+//#define DEBUG_ALL
+//#define DEBUG_KBD
+//#define FORCE_TEMPLATED_NOPS
+
+#define lang_DE                     // comment for en, uncomment for de 
+
+#include <arduino.h>
+
+#include <lvgl.h>
+//#define LGFX_USE_V1
+#include <LovyanGFX.hpp>            // CPU LovyanGFX ~86%, TFT_eSPI ~68%, without USB-Host <10%
+
+#include <demos/lv_demos.h>
+#include <examples/lv_examples.h>  //#include <../examples/lv_examples.h>
+
+// Only for PlatformIO. PlatformIO doesn't find *.c files in subdirectories ? Arduino IDE does. 
+//#define PLATFORMIO
+#ifdef PLATFORMIO
+  #include <examples/widgets/btn/lv_example_btn_1.c>
+  #include <examples/widgets/msgbox/lv_example_msgbox_1.c>
+  #include <examples/widgets/menu/lv_example_menu_1.c>
+  #include <examples/widgets/tabview/lv_example_tabview_1.c>
+  //#include <examples/widgets/textarea/lv_example_textarea_1.c>  // ? 
+  //#include <examples/widgets/win/lv_example_win_1.c>            // ?
+  //#include <examples/get_started/lv_example_get_started_1.c>
+  // ...
+#endif
+
+#define USE_LGFX_FILE   // Comment this line, to use the configuration below
+#ifdef USE_LGFX_FILE
+  #if defined CONFIG_IDF_TARGET_ESP32S3 || defined CONFIG_IDF_TARGET_ESP32S2 // for ESP32 S2 or S3
+    #include <../../LGFX_ESP32_S3_ILI9341.hpp> 
+    //#include <LGFX_ESP32_S3_ILI9341.hpp>
+  #else
+    #include <../../LGFX_ESP32_ILI9341_CS14.hpp>  // Path Arduino/libraries/ or LVGL_Demo_PIO/.pio/libdeps/esp32dev/
+  #endif
+#else  
+  //  Create a class that does your own settings, derived from LGFX_Device. 
+class LGFX : public lgfx::LGFX_Device
+{ 
+  lgfx::Panel_ILI9341      _panel_instance;
+  lgfx::Bus_SPI            _bus_instance;
+  lgfx::Touch_XPT2046      _touch_instance;
+
+public:
+
+  LGFX(void) 
+  { 
+    {  //  Configure bus control settings. 
+      auto cfg = _bus_instance.config();  //  Get the structure for the bus configuration. 
+
+      //  SPI bus configuration 
+      cfg.spi_host    = SPI2_HOST;        //  Select the SPI to use ESP32-S2,C3 : SPI2_HOST or SPI3_HOST / ESP32 : VSPI_HOST or HSPI_HOST 
+      //  * Due to the ESP-IDF version upgrade, VSPI_HOST and HSPI_HOST descriptions are deprecated, so if an error occurs, use SPI2_HOST and SPI3_HOST instead. 
+      cfg.spi_mode    = 0;                //  Set SPI communication mode (0 ~ 3)
+      cfg.freq_write  = 40000000;         //  80000000 // SPI clock frequency when sending (max 80MHz, rounded to 80MHz divided by an integer)
+      cfg.freq_read   = 16000000;         //  SPI clock frequency when receiving 
+      cfg.spi_3wire   = true;             //  Set true if receiving on the MOSI 
+      cfg.use_lock    = true;             //  set true to use transaction 
+      cfg.dma_channel = SPI_DMA_CH_AUTO;  //  Set the DMA channel to use (0=not use DMA / 1=1ch / 2=ch / SPI_DMA_CH_AUTO=auto setting) 
+      //  * With the ESP-IDF version upgrade, SPI_DMA_CH_AUTO (automatic setting) is recommended for the DMA channel.   Specifying 1ch and 2ch is deprecated. 
+      cfg.pin_sclk    = 12;               //  SPI SCLK
+      cfg.pin_mosi    = 11;               //  SPI MOSI
+      cfg.pin_miso    = 13;               //  SPI MISO      (-1 = disable) 
+      cfg.pin_dc      =  7;               //  SPI D/C = A0  (-1 = disable) 
+      //  When using the same SPI bus as the SD card, be sure to set MISO without omitting it. 
+      
+      _bus_instance.config(cfg);
+      _panel_instance.setBus(&_bus_instance);
+    }
+
+    { // Set display panel controls.
+      auto cfg = _panel_instance.config();
+
+      cfg.pin_cs           =    10;  // CS    (-1 = disable)
+      cfg.pin_rst          =    -1;  // RST   (-1 = disable)
+      cfg.pin_busy         =    -1;  // BUSY  (-1 = disable)
+
+      // * The following setting values ​​are general initial values ​​for each panel, so please try commenting out any unknown items. 
+
+      cfg.panel_width      =   240;  // actual displayable width
+      cfg.panel_height     =   320;  // actual displayable  height
+      cfg.offset_x         =     0;  // Panel offset in X 
+      cfg.offset_y         =     0;  // Panel offset in Y
+      cfg.offset_rotation  =     2;  // Rotation value offset 0~7 (4~7 are upside down 
+      cfg.dummy_read_pixel =     8;  // Number of dummy read bits before pixel read
+      cfg.dummy_read_bits  =     1;  // Number of dummy read bits before non-pixel data read
+      cfg.readable         =  true;  // Data can be read set to true
+      cfg.invert           = false;  // if panel light and dark are inverted set to true
+      cfg.rgb_order        = false;  // if panel red and blue are reversed set to true
+      cfg.dlen_16bit       = false;  // Set to true for panels that transmit data length in 16-bit units with 16-bit parallel or SPI
+      cfg.bus_shared       =  true;  // If the bus is shared with the SD card, set to true (bus control with drawJpgFile etc.)
+
+      // Please set below only with drivers that can change the number of pixels such as ST7735 and ILI9163.
+      // Please set the following only when the display shifts with a driver with a variable number of pixels such as ST7735 or ILI9163.
+      //cfg.memory_width     =   240;  // Maximum width  supported by the driver IC
+      //cfg.memory_height    =   320;  // Maximum height supported by the driver IC
+
+      _panel_instance.config(cfg);
+    }
+
+    { // Configure settings for touch screen control.  (delete if not necessary)
+
+      auto cfg = _touch_instance.config();
+
+      // numbers for x_min etc. doesn't work
+      cfg.x_min           =  340;  // Minimum X value (raw value) obtained from the touchscreen
+      cfg.x_max           = 3900;  // Maximum X value (raw value) obtained from the touchscreen
+      cfg.y_min           =  235;  // Minimum Y value obtained from touchscreen (raw value)
+      cfg.y_max           = 3900;  // Maximum Y value (raw value) obtained from touchscreen
+      cfg.pin_int         =   -1;  // Pin number to which INT is connected (-1 = not connected)
+      cfg.bus_shared      = true;  // Set true when using a common bus with the screen
+      cfg.offset_rotation =    0;  // Adjustment when the orientation does not match Set with a value from 0 to 7
+      //cfg.offset_rotation =  6;  // 6 fits but double lines. why?
+
+      // For SPI connection
+      cfg.spi_host = SPI2_HOST;    // Select SPI to use (HSPI_HOST or VSPI_HOST)
+      cfg.freq     = 2500000;      // SPI Clock frequency 1000000 -> 2500000
+      cfg.pin_sclk = 12;           // SCLK
+      cfg.pin_mosi = 11;           // MOSI
+      cfg.pin_miso = 13;           // MISO
+      cfg.pin_cs   =  6;           // CS
+
+      _touch_instance.config(cfg);
+      _panel_instance.setTouch(&_touch_instance);
+    }
+    setPanel(&_panel_instance);
+  }
+};
+#endif
+
+LGFX tft;
+
+#define SCREEN_ROTATION 0                                   // set the screen rotation
+
+/*Change to your screen resolution*/
+#if (SCREEN_ROTATION == 1) || (SCREEN_ROTATION == 3)
+  static const uint16_t screenWidth  = 320;                 // rotation 1 or 3
+  static const uint16_t screenHeight = 240;
+#else  
+  static const uint16_t screenWidth  = 240;                 // rotation 0 or 2
+  static const uint16_t screenHeight = 320;
+#endif
+
+static lv_disp_draw_buf_t draw_buf;
+static lv_color_t buf[ screenWidth * screenHeight / 4 ];    // screen buffer size
+//static lv_color_t buf[ screenWidth * 10 ];                // smaller if compile error
+
+#include <ESP32-USB-Soft-Host.h>
+#include "usbkbd_de.h"            // class KeyboardReportParser
+#include "kbdparser_de.h"         // class KbdRptParser
+
+//#include "Cursor_11x19.c"       // mouse cursor
+#include "Cursor_15x24.c"         // mouse cursor
+//#include "Cursor_20x31.c"       // mouse cursor
+
+#if defined CONFIG_IDF_TARGET_ESP32S3 || defined CONFIG_IDF_TARGET_ESP32S2 // for ESP32 S2 or S3
+  #define PROFILE_NAME "ESP32 S2/S3"
+  #define DP_P0  15 // USB Host Data+ Pin (must be an analog pin) (GPIO 1-20)
+  #define DM_P0  16 // USB Host Data- Pin (must be an analog pin)
+  #define DP_P1  18
+  #define DM_P1  17
+  #define DP_P2   9
+  #define DM_P2   8
+  #define DP_P3  -1 // 20 doesn't work
+  #define DM_P3  -1 // 19 doesn't work
+#else  
+  #define PROFILE_NAME "Default Wroom"  // USB 2+3 disabled
+  #define DP_P0  16 // always enabled
+  #define DM_P0  17 // always enabled
+  #define DP_P1  -1 // 22 // ( -1 to disable )
+  #define DM_P1  -1 // 23 // ( -1 to disable ) used for tft
+  #define DP_P2  -1 // 18 // ( -1 to disable ) used for tft
+  #define DM_P2  -1 // 19 // ( -1 to disable ) used for tft
+  #define DP_P3  13 // ( -1 to disable ) now available. tft CS 13 -> 14
+  #define DM_P3  15 // ( -1 to disable )
+#endif
+
+KbdRptParser Prs;
+
+// better use xQueueHandle usb_msg_queue in library ESP_USBSoftHost ?
+static xQueueHandle cb_queue = NULL;
+struct cbMessage {
+  uint8_t usbNum;
+  uint8_t byte_depth;
+  uint8_t data[0x8];
+  uint8_t data_len;
+};
+//struct cbMessage cb_msg;
+
+usb_pins_config_t USB_Pins_Config = { DP_P0, DM_P0, DP_P1, DM_P1, DP_P2, DM_P2, DP_P3, DM_P3 };
+
+// ------------------------------------------------------------------------------------------ //
+// Callback for ESP32-USB-Soft-Host
+static void my_USB_DetectCB( uint8_t usbNum, void * dev )
+{
+  sDevDesc *device = (sDevDesc*)dev;
+  printf("\nNew device detected on USB#%d\n", usbNum);
+  printf("desc.bcdUSB             = 0x%04x\n", device->bcdUSB);
+  //printf("desc.bDeviceClass       = 0x%02x\n", device->bDeviceClass);
+  //printf("desc.bDeviceSubClass    = 0x%02x\n", device->bDeviceSubClass);
+  //printf("desc.bDeviceProtocol    = 0x%02x\n", device->bDeviceProtocol);
+  //printf("desc.bMaxPacketSize0    = 0x%02x\n", device->bMaxPacketSize0);
+  printf("desc.idVendor           = 0x%04x\n", device->idVendor);
+  printf("desc.idProduct          = 0x%04x\n", device->idProduct);
+  //printf("desc.bcdDevice          = 0x%04x\n", device->bcdDevice);
+  //printf("desc.iManufacturer      = 0x%02x\n", device->iManufacturer);
+  //printf("desc.iProduct           = 0x%02x\n", device->iProduct);
+  //printf("desc.iSerialNumber      = 0x%02x\n", device->iSerialNumber);
+  //printf("desc.bNumConfigurations = 0x%02x\n", device->bNumConfigurations);
+  //printf("\n");
+  // if( device->iProduct == mySupportedIdProduct && device->iManufacturer == mySupportedManufacturer ) {
+  //   myListenUSBPort = usbNum;
+  // }
+}
+// ------------------------------------------------------------------------------------------ //
+// Callback for ESP32-USB-Soft-Host
+static void my_USB_PrintCB(uint8_t usbNum, uint8_t byte_depth, uint8_t* data, uint8_t data_len)
+{
+  struct cbMessage msg;
+
+  msg.usbNum     = usbNum;
+  msg.byte_depth = byte_depth;
+  msg.data_len   = data_len<0x8?data_len:0x8;
+  for(int k=0;k<msg.data_len;k++) {
+    msg.data[k] = data[k];
+  }
+
+  // split here or in my_usb_host_read ?
+  // if ( data_len == 8 ) 
+      //xQueueSend( kbd_queue, ( void * ) &msg, (TickType_t) 0 );
+  //else if ( data_len == 4 ) 
+    xQueueSend( cb_queue, ( void * ) &msg, (TickType_t) 0 );
+  //else 
+    //; // ???
+}
+// ------------------------------------------------------------------------------------------ //
+/* Serial debugging */
+#if LV_USE_LOG != 0
+void my_print(const char * buf)
+{
+    Serial.printf(buf);
+    Serial.flush();
+}
+#endif
+// ------------------------------------------------------------------------------------------ //
+/* Display flushing */
+void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
+{
+   uint32_t w = ( area->x2 - area->x1 + 1 );
+   uint32_t h = ( area->y2 - area->y1 + 1 );
+
+   tft.startWrite();
+   tft.setAddrWindow( area->x1, area->y1, w, h );
+   //tft.pushColors( ( uint16_t * )&color_p->full, w * h, true );
+   tft.writePixels((lgfx::rgb565_t *)&color_p->full, w * h);
+   tft.endWrite();
+
+   lv_disp_flush_ready( disp );
+}
+// ------------------------------------------------------------------------------------------ //
+// Read the keyboard
+void my_kbd_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data ) { 
+  uint8_t  num = 0;
+  uint32_t key = 0;
+  //static int ux_max_key = 0;
+
+  data->state = LV_INDEV_STATE_REL;
+  key = Prs.ReceiveKey();
+  if (key) {
+    //num = Prs.MessagesWaiting();
+    //if (ux_max_key < num) ux_max_key = num;
+    //Serial.printf("(M %i/%i, K %i)", num , ux_max_key, key);
+  
+    data->key   = key;
+    data->state = LV_INDEV_STATE_PR;
+    //Serial.print("D"); Serial.print(data->key);
+  }  
+  if (num > 0) data->continue_reading = true;
+}  
+// ------------------------------------------------------------------------------------------ //
+//Read the usb_host
+void my_usb_host_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data ) { 
+  struct cbMessage msg;
+  int num = 0;
+  static byte parse_before = 0;
+  static int ux_max = 0;
+
+  data->state = LV_INDEV_STATE_REL;
+  if (xQueueReceive(cb_queue, &msg, ( portTickType ) 10)) {
+
+    num = uxQueueMessagesWaiting( cb_queue );
+    if (ux_max < num) ux_max = num;
+
+    if (msg.data_len == 8) {                                   // Keyboard
+      Prs.Parse( msg.data_len, msg.data );
+      parse_before = 1;
+    }  
+    else if (msg.data_len == 4) {                              // Mouse
+      printf("M %i/%i, ", num , ux_max); 
+      if (parse_before) printf("\n");
+      parse_before = 0;
+      if (msg.data[1] > 0) {                                   // Mouse move
+        data->point.x = data->point.x + (int8_t) msg.data[1];
+        if (data->point.x < 0) data->point.x = 0;
+          else if (data->point.x >= screenWidth) 
+            data->point.x = screenWidth - 1;
+      }  
+      if (msg.data[2] > 0) {
+        data->point.y = data->point.y + (int8_t) msg.data[2];
+        if (data->point.y < 0) data->point.y = 0;
+          else if (data->point.y >= screenHeight) 
+            data->point.y = screenHeight - 1;
+      }  
+      if ((msg.data[1] > 0) || (msg.data[2] > 0))
+        printf("Mouse Move x = %i, y = %i ", data->point.x, data->point.y);  
+      
+      if (msg.data[3] > 0) {                                   // Mouse scroll
+        printf("ScrollUp  %i ", (int8_t) msg.data[3]);  
+        data->enc_diff =  (int8_t) msg.data[3];
+        if ( (int8_t) msg.data[3] > 0)
+          Prs.SendKey(LV_KEY_PREV);
+        else if ( (int8_t) msg.data[3] < 0)
+          Prs.SendKey(LV_KEY_NEXT);
+      }  
+      if (msg.data[0] > 0) {                                   // Mouse buttons
+        printf("Button %i ", msg.data[0] );
+        if (msg.data[0] == 1)                                  // left button  
+          data->state = LV_INDEV_STATE_PR;  
+        else if (msg.data[0] == 2)                             // right button
+          Prs.SendKey(LV_KEY_ESC);
+        //else if (msg.data[0] == 4)                           // middle button
+      }  
+      printf("\n");
+    }  
+    else {
+      printf("in: ");
+      for(int k=0;k<msg.data_len;k++) {
+        printf("0x%02x ", msg.data[k] );
+      }
+      printf("\n");
+    } 
+  }   
+  if (num > 0) 
+    data->continue_reading = true;
+}
+// ------------------------------------------------------------------------------------------ //
+/*Read the touchpad*/
+void my_touchpad_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data )
+{
+   uint16_t touchX, touchY;
+   bool touched = tft.getTouch( &touchX, &touchY);
+   if( !touched )
+   {
+      data->state = LV_INDEV_STATE_REL;
+   }
+   else
+   {
+      data->state = LV_INDEV_STATE_PR;
+
+      /*Set the coordinates*/
+      data->point.x = touchX;
+      data->point.y = touchY;
+
+      if (data->point.x < 0) data->point.x = 0;
+        else if (data->point.x >= screenWidth) data->point.x = screenWidth - 1;
+
+      if (data->point.y < 0) data->point.y = 0;
+        else if (data->point.y >= screenHeight) data->point.y = screenHeight - 1;
+
+      //Serial.print( "Data x " );
+      //Serial.println( touchX );
+
+      //Serial.print( "Data y " );
+      //Serial.println( touchY );
+   }
+}
+// ------------------------------------------------------------------------------------------ //
+//static void my_touchpad_click (struct _lv_indev_drv_t *drv, unsigned char ch)
+static void my_touchpad_click (struct _lv_indev_drv_t *drv, uint8_t cx)
+{
+  //if (event == LV_EVENT_PRESSED) {
+    //audio_play (sound_sinus2000hz_100ms);
+  //}
+}
+// ------------------------------------------------------------------------------------------ //
+// Forward declarations
+void lv_example_win_2(lv_obj_t * &win2, lv_group_t * &g, lv_indev_t * &k);
+void lv_example_tabview_3(lv_group_t * &g, lv_indev_t * &k);
+// ------------------------------------------------------------------------------------------ //
+void setup()
+{
+  Serial.begin(115200);
+
+  tft.begin();        
+  tft.setRotation(SCREEN_ROTATION);
+  tft.setBrightness(255);
+
+  uint16_t calData[8] = {3890, 340, 3900, 3895, 235, 340, 235, 3900};
+  tft.setTouchCalibrate(calData);
+
+  lv_init();
+  lv_disp_draw_buf_init( &draw_buf, buf, NULL, screenWidth * 10 );
+
+  /*Initialize the display*/
+  static lv_disp_drv_t disp_drv;
+  lv_disp_drv_init(&disp_drv);
+
+  /*Change the following line to your display resolution*/
+  disp_drv.hor_res = screenWidth;
+  disp_drv.ver_res = screenHeight;
+  disp_drv.flush_cb = my_disp_flush;
+  disp_drv.draw_buf = &draw_buf;
+  lv_disp_drv_register(&disp_drv);
+
+  // touchpad
+  static lv_indev_drv_t touchpad_drv;
+  lv_indev_drv_init( &touchpad_drv );
+  touchpad_drv.type    = LV_INDEV_TYPE_POINTER;
+  touchpad_drv.read_cb = my_touchpad_read;
+  //touchpad_drv.feedback_cb = my_touchpad_click;
+  lv_indev_drv_register( &touchpad_drv );
+
+  // create xQueue's for usb_host and keyboard keys
+  cb_queue  = xQueueCreate( 10, sizeof( struct cbMessage) );
+  Prs.InitKeyQueue( 10 );
+
+  // mouse ( and keyboard ? )
+  static lv_indev_drv_t usb_host_drv;
+  lv_indev_drv_init( &usb_host_drv );
+  usb_host_drv.type    = LV_INDEV_TYPE_POINTER;
+  usb_host_drv.read_cb = my_usb_host_read;
+  lv_indev_t * mouse_indev = lv_indev_drv_register( &usb_host_drv );
+ 
+   // mouse cursor
+  lv_obj_t * mouse_cursor = lv_img_create(lv_scr_act());
+  //lv_img_set_src(mouse_cursor, LV_SYMBOL_PLAY);
+  //lv_img_set_src(mouse_cursor, &Cursor_11x19);
+  lv_img_set_src(mouse_cursor, &Cursor_15x24);
+  //lv_img_set_src(mouse_cursor, &Cursor_20x31);
+  lv_indev_set_cursor(mouse_indev, mouse_cursor);
+
+  // keyboard
+  static lv_indev_drv_t kbd_drv;
+  //static lv_indev_t keypad_indev;
+  lv_indev_drv_init( &kbd_drv );
+  kbd_drv.type    = LV_INDEV_TYPE_KEYPAD;
+  kbd_drv.read_cb = my_kbd_read;
+  lv_indev_t * keypad_indev = lv_indev_drv_register( &kbd_drv );
+   
+  // Interactive widgets - such as buttons, checkboxes, sliders, etc - can be automatically added to a default group. Just create a group with 
+  lv_group_t * g = lv_group_create();                            // and set the default group with 
+  lv_group_set_default(g);                                       // Don't forget to assign the input device(s) to the default group with 
+  lv_indev_set_group(mouse_indev , g);
+  lv_indev_set_group(keypad_indev, g); 
+
+  // lv_group_add_obj(g, obj);
+
+  Serial.printf("\nUSB Soft Host Test for '%s'.\n", PROFILE_NAME );
+  USH.init( USB_Pins_Config, my_USB_DetectCB, my_USB_PrintCB);
+
+  // Error ? Have you copied the folders examples und demos 
+  // from .pio\libdeps\esp32-s3-devkitc-1-n16r8\lvgl to .pio\libdeps\esp32-s3-devkitc-1-n16r8\lvgl\src ? 
+
+  // *** uncomment only **ONE** of these lines ( examples or demos ) ***
+    
+  // lv_example_get_started_1();   // view examples online :
+  // lv_example_btn_1();           // https://docs.lvgl.io/8.3/widgets/core/index.html or
+  // lv_example_msgbox_1();        // https://docs.lvgl.io/8.3/widgets/extra/index.html 
+  // lv_example_menu_1();
+  // lv_example_tabview_1();
+  // lv_example_textarea_1();
+  // lv_example_win_1();
+  // ...
+  
+  // see below
+ //lv_group_t * g; lv_example_tabview_3( g, keypad_indev );
+  // lv_group_t * g; lv_example_win_2(g, keypad_indev);
+
+  lv_demo_widgets();               // OK ( OK = enabled in lv_conf.h or platform.ini)
+  // lv_demo_benchmark();          // OK weighted FPS/Max : 27/68fps (40MHz), 34/87fps(80MHz), ST7735 50/??fps
+  // lv_demo_keypad_encoder();     // OK works, but I haven't an encoder
+  // lv_demo_music();              // Ok ?
+  // lv_demo_printer();            // MISSING
+  // lv_demo_stress();             // OK
+}
+// ------------------------------------------------------------------------------------------ //
+void loop()
+{
+   lv_timer_handler(); /* let the GUI do its work */
+   delay( 5 );
+}
+// ========================================================================================== //
