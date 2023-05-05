@@ -40,7 +40,7 @@ D+ and D- are directly connected to the GPIO's without using any resistor. SD-ca
 
 ## Test programs
 
-Details about installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). All modified files can be found above in the folder [Arduino](Arduino/) or [PlatformIO](PlatformIO/). Version 0.1.4 of ESP32-USB-Soft-Host is used.
+Details about installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). All modified files can be found above in the folder [Arduino](Arduino/) or [PlatformIO](PlatformIO/). Version 0.1.4 of ESP32-USB-Soft-Host is used and must be copied e.g. from [here](PlatformIO/LVGL_Demo_USB_kbd/.pio/libdeps/esp32dev/ESP32-USB-Soft-Host-main/).
 
 - [USB_Test_Scan.ino](Arduino/USB_Test_Scan) ( [PlatformIO version](PlatformIO/USB_Test_Scan) )
   - Used for testing, whether there are mice and keyboards, that work with "ESP32-USB-Soft-Host". Only this library must be installed or copied. The line "#define DEBUG_ALL" is not commented, so a lot of informations are shown. For further informations every 10 seconds or so ( USB0: Ack = 0 Nack = 0 ... ) set the "Core Debug Level" to "Debug" or "Verbose" in the Arduino IDE.
