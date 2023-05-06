@@ -40,7 +40,7 @@ One goal of this test was, to use the USB-OTG-Connector for usb devices, but GPI
 
 ## Configure the Arduino IDE
 
-| Arduino IDE         | my setup             | Remark |
+| Arduino IDE         | My setup             | Remark |
 | :------------------ | :------------------- | :- |
 | Board               | ESP32S3 Dev Module   | |
 | Port                | COM3                 | |
