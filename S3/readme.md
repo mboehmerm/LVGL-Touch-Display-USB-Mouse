@@ -1,8 +1,8 @@
 # ESP32-S3 + LVGL + Touch Display + USB-Mouse + USB-Keyboard
 
-## ! under construction !
+Tested with YD ESP32-S3 N16R8 ~9€ (similar to ESP32-S3-DevKitC-1) with an ili9341 display and Arduino IDE 2.1.0 ( PlatformIO ).
 
-Tested with YD ESP32-S3 N16R8 ~9€ (similar to ESP32-S3-DevKitC-1) with an ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
+This test based on the test with an ESP32-DevKitC v4 [here](../README.md)
 
 ![LVGL](pictures/Board_LVGL.jpg)
 ![Headless](pictures/Board_Headless_small.jpg)
@@ -94,12 +94,12 @@ The target of these programs is to find out how HID mice and keyboards can be us
 
 Some informations can be found in the folders [AppData](AppData/) and [.platformio ](.platformio/)
 
-## To be done
+## Problems
 
 GPIO19 and GPIO20 does not work (yet?) with ESP32-USB-Soft-Host.
 
 The PlatformIO version S3_LVGL_TFT_eSPI_USB does not work. Kernel panic. Why ?
 
-There is a nice solution with Espressif IDF here: 
+There is a nice solution with Espressif IDF can be found here: 
 https://www.youtube.com/watch?v=WPlPRkPx1_8&ab_channel=ThatProject
 
