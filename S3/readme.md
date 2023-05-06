@@ -2,7 +2,7 @@
 
 ## ! under construction !
 
-Tested with YD ESP32-S3 N16R8 ~9€ (similar to ESP32-S3-DevKitC-1) with ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
+Tested with YD ESP32-S3 N16R8 ~9€ (similar to ESP32-S3-DevKitC-1) with an ili9341 display and Arduino IDE 2.1.0 ( PlatformIO )
 
 ![LVGL](pictures/Board_LVGL.jpg)
 ![Headless](pictures/Board_Headless_small.jpg)
@@ -34,33 +34,44 @@ Share SPI - MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 |      |       | VCC   |       |         | 3.3V           |
 |      |       | LED   |       |         | 3.3V           |
 
-D+ and D- are directly connected to the GPIO's without using any resistor. SD-card and GPIO 5 are not used in this test. USB is connected to 3.3V instead of 5V. This was not intended, but some USB devices will work with it, so i kept it. GPIO9 and GPIO8 do also work with ESP32-USB-Soft-Host.
+D+ and D- are directly connected to the GPIO's without using any resistor. SD-card is not used in this test. USB is connected to 3.3V instead of 5V. This was not intended, but some USB devices will work with it, so i kept it. GPIO9 and GPIO8 do also work with ESP32-USB-Soft-Host. 
+
+One goal of this test was, to use the USB-OTG-Connector for usb devices, but GPIO19 and GPIO20 doesn't work here. The connector "usb-otg" on the back of this board is soldered, so usb devices get about 4.65V from the usb-uart connector via one diode. See [schematics](schematics/).
 
 ## Configure the Arduino IDE
 
-| Arduino IDE         | my setup             |   |
-| :------------------ | :------------------- |:- |
-| Board               | ESP32S3 Dev Module   | n |
-| Port                | COM3                 |   |
-| --------------------| -------------------- |---|
-| USB CDC On Boot     | Disabled             | n |
-| CPU Frequency       | 240MHz (Wifi)        |   | 
-| Core Debug Level    | None                 |   |
-| USB DFU On Boot     | Disabled             | n |
-| Erase All Flash ... | Disabled             |   |
-| Events Run On       | Core 1               |   |
-| Flash Mode          | QIO 80MHz            |   |
-| Flash Size          | 16MB (128Mbit)       |   |
-| JTAG Adapter        | Disabled             | n |
-| Arduino Runs On     | Core 1               |   |
-| USB Firmare MSC ... | Disabled             | n |
-| Partition scheme    | 8M with spiffs ...   |   |
-| PSRAM               | Disabled             |   |
-| Upload Mode         | UART0 / Hardware CDC | n |
-| Upload Speed        | 921600               |   |
-| USB Mode            | USB-OTG (TinyUSB)    | n |
+| Arduino IDE         | my setup             | Remark |
+| :------------------ | :------------------- | :- |
+| Board               | ESP32S3 Dev Module   | |
+| Port                | COM3                 | |
+| --------------------| -------------------- | --------------------------------------- |
+| USB CDC On Boot     | Disabled             | for upload and serial monitor on COM3 ! |
+| CPU Frequency       | 240MHz (Wifi)        | |
+| Core Debug Level    | None                 | |
+| USB DFU On Boot     | Disabled             | |
+| Erase All Flash ... | Disabled             | |
+| Events Run On       | Core 1               | |
+| Flash Mode          | QIO 80MHz            | |
+| Flash Size          | 16MB (128Mbit)       | |
+| JTAG Adapter        | Disabled             | so serial monitor stays on COM3 |
+| Arduino Runs On     | Core 1               | |
+| USB Firmare MSC ... | Disabled             | |
+| Partition scheme    | 8M with spiffs ...   | |
+| PSRAM               | Disabled             | |
+| Upload Mode         | UART0 / Hardware CDC | upload on COM3 |
+| Upload Speed        | 921600               | |
+| USB Mode            | USB-OTG (TinyUSB)    | necessary for ESP32-USB-Soft-Host S2,S3 |
 
-where n = necessary (i assume).
+The lines with remark should be necessary for ESP32-USB-Soft-Host and the ESP32 S2 and S3. Using PlatformIO and esp32-s3-devkitc-1 there must be set the following flags in platformio.ini :
+```
+; don't use spaces in build_flags before and after the "=" !!!
+build_unflags = 
+  -D ARDUINO_USB_MODE=1         ; necessary for esp32-s3-devkitc-1.json
+build_flags =
+  -D ARDUINO_USB_MODE=0         ; 0= USB-OTG(TinyUSB), 1= Hardware USB CDC
+  -D ARDUINO_USB_CDC_ON_BOOT=0  ; 0= upload and serial monitor on COM3
+  -Wno-narrowing                ; disable [-Wnarrowing] errors 
+```  
 
 ## Test programs
 
@@ -81,7 +92,7 @@ The target of these programs is to find out how HID mice and keyboards can be us
 
 ## Custom Boards and Partitions
 
-Some information can be found in the folders [AppData](AppData/) and [.platformio ](.platformio/)
+Some informations can be found in the folders [AppData](AppData/) and [.platformio ](.platformio/)
 
 ## To be done
 
@@ -89,6 +100,6 @@ GPIO19 and GPIO20 does not work (yet?) with ESP32-USB-Soft-Host.
 
 The PlatformIO version S3_LVGL_TFT_eSPI_USB does not work. Kernel panic. Why ?
 
-There is a solution with Espressif IDF here: 
+There is a nice solution with Espressif IDF here: 
 https://www.youtube.com/watch?v=WPlPRkPx1_8&ab_channel=ThatProject
 
