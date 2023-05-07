@@ -40,6 +40,18 @@ Share SPI - MOSI, MISO and CLK, so you need only 11 Pin's for 3 SPI devices.
 
 D+ and D- are directly connected to the GPIO's without using any resistor. SD-card and GPIO 5 are not used in this test.
 
+## Quick installation
+- Arduino :
+  - Install the libraries "lvgl", "TFT_eSPI" and "LovyanGFX".
+  - Copy all files from the folders "Arduino" and "libraries", which contain all configuration files and the library "ESP32-USB-Soft-Host-main" version 1.0.4.
+  - Copy the demos folder "Arduino\libraries\lvgl\demos" to "Arduino\libraries\lvgl\ **src**\demos"
+  - Copy the examples folder "Arduino\libraries\lvgl\examples" to "Arduino\libraries\lvgl\ **src**\examples".
+- PlatformIO :
+  - Copy all files from the folder "PlatformIO/LVGL_Demo_USB_kbd/" or "PlatformIO/LVGL_Demo_USB_Lovyan_kbd/" to your project folder.
+  - PlatformIO should now install the missing libraries.
+  - Copy the folder ".pio/libdeps/esp32dev/lvgl/demos" to ".pio/libdeps/esp32-s3-devkitc-1/lvgl/ **src**/demos".
+  - Copy the folder ".pio/libdeps/esp32dev/lvgl/examples" to ".pio/libdeps/esp32-s3-devkitc-1/lvgl/ **src**/examples". 
+
 ## Test programs
 
 Details about installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). All modified files can be found above in the folders [Arduino](Arduino/) or [PlatformIO](PlatformIO/). Version 0.1.4 of ESP32-USB-Soft-Host is used and must be copied e.g. from [here](PlatformIO/LVGL_Demo_USB_kbd/.pio/libdeps/esp32dev/ESP32-USB-Soft-Host-main/).

@@ -73,6 +73,18 @@ build_flags =
   -Wno-narrowing                ; disable [-Wnarrowing] errors 
 ```  
 
+## Quick installation
+- Arduino :
+  - Install the libraries "lvgl", "TFT_eSPI" and "LovyanGFX".
+  - Copy all files from the folders "Arduino" and "libraries", which contain all configuration files and the library "ESP32-USB-Soft-Host-main" version 1.0.4.
+  - Copy the demos folder "Arduino\libraries\lvgl\demos" to "Arduino\libraries\lvgl\ **src**\demos"
+  - Copy the examples folder "Arduino\libraries\lvgl\examples" to "Arduino\libraries\lvgl\ **src**\examples".
+- PlatformIO :
+  - Copy all files from the folder "PlatformIO/S3_LVGL_LovyanGFX_USB/" to your project folder.
+  - PlatformIO should now install the missing libraries.
+  - Copy the folder ".pio/libdeps/esp32-s3-devkitc-1/lvgl/demos" to ".pio/libdeps/esp32-s3-devkitc-1/lvgl/src/demos".
+  - Copy the folder ".pio/libdeps/esp32-s3-devkitc-1/lvgl/examples" to ".pio/libdeps/esp32-s3-devkitc-1/lvgl/src/examples".
+
 ## Test programs
 
 Some details about installation and configuration of the libraries LVGL, TFT_eSPI and LovyanGFX can be found [here](https://github.com/mboehmerm/Touch-Display-ili9341-320x240). All modified files can be found above in the folder [Arduino](Arduino/) or [PlatformIO](PlatformIO/). Version 0.1.4 of ESP32-USB-Soft-Host is used and must be copied e.g. from [here](PlatformIO/S3_LVGL_LovyanGFX_USB/.pio/libdeps/esp32-s3-devkitc-1/ESP32-USB-Soft-Host-main/)
