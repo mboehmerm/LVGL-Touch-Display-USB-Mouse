@@ -43,7 +43,7 @@ D+ and D- are directly connected to the GPIO's without using any resistor. SD-ca
 ## Quick installation
 - Arduino :
   - Install the libraries "lvgl", "TFT_eSPI" and "LovyanGFX".
-  - Copy all files from the folders "Arduino" and "libraries", which contain all configuration files and the library "ESP32-USB-Soft-Host-main" version 1.0.4.
+  - Copy the program file(s) from the folder "Arduino/" and especially "Arduino/libraries/", which contain all configuration files and the library "ESP32-USB-Soft-Host-main" version 1.0.4 .
   - Copy the demos folder "Arduino\libraries\lvgl\demos" to "Arduino\libraries\lvgl\ **src**\demos"
   - Copy the examples folder "Arduino\libraries\lvgl\examples" to "Arduino\libraries\lvgl\ **src**\examples".
 - PlatformIO :
