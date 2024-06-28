@@ -38,7 +38,7 @@
 #define SMOOTH_FONT
 
 // FSPI / VSPI port (SPI2) used unless following defined. HSPI port is (SPI3) on S3.
-//#define USE_HSPI_PORT
+#define USE_HSPI_PORT
 
 // Other options
 #define SPI_FREQUENCY       40000000  // 32.4 fps. works fine. 
